@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pinterest-style Gallery — Index</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#F6F4F2; /* parchment-like */
+      --muted:#8b8b8b;
+      --accent:#6e9464;
+      --accent-2:#D4BCA5;
+      --card-bg: #FFFFFF;
+      --glass: rgba(255,255,255,0.6);
+      --shadow: 0 8px 30px rgba(19,21,19,0.08);
+      --radius: 14px;
+      --gap: 18px;
+      --max-width:1200px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;padding:40px 20px 80px;
+      font-family:Inter,system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+      background:linear-gradient(180deg,var(--bg),#F2EFED);
+      color:#222;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      display:flex;justify-content:center;
+    }
+    .wrap{width:100%;max-width:var(--max-width)}
+
+    /* Header */
+    header{display:flex;align-items:center;gap:20px;margin-bottom:20px}
+    .logo{display:flex;align-items:center;gap:12px}
+    .logo .mark{width:46px;height:46px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;color:white;font-weight:800;font-family:Playfair Display;font-size:20px;box-shadow:var(--shadow)}
+    .logo h1{margin:0;font-size:18px}
+    .searchbar{flex:1;display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:12px;background:var(--card-bg);box-shadow:var(--shadow)}
+    .searchbar input{border:0;outline:0;font-size:15px;background:transparent;width:100%}
+    .actions{display:flex;gap:12px;align-items:center}
+    .chip{padding:8px 12px;border-radius:999px;background:var(--glass);border:1px solid rgba(0,0,0,0.04);font-weight:600;color:var(--accent)}
+
+    /* Filters */
+    .filters{display:flex;gap:10px;margin:16px 0 24px;flex-wrap:wrap}
+    .filters button{background:transparent;border:0;padding:8px 12px;border-radius:999px;cursor:pointer;font-weight:600;color:var(--muted)}
+    .filters button.active{background:var(--accent);color:white;box-shadow:var(--shadow)}
+
+    /* Masonry area using CSS columns */
+    .masonry{
+      column-count:3;
+      column-gap:var(--gap);
+      width:100%;
+    }
+    @media (max-width:1000px){.masonry{column-count:2}}
+    @media (max-width:640px){.masonry{column-count:1}}
+
+    .card{display:inline-block;width:100%;margin:0 0 var(--gap);background:var(--card-bg);border-radius:12px;overflow:hidden;box-shadow:var(--shadow);transition:transform .18s ease,box-shadow .18s ease}
+    .card:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(19,21,19,0.12)}
+    .card img{width:100%;height:auto;display:block}
+    .meta{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .meta .left{display:flex;gap:10px;align-items:center}
+    .avatar{width:38px;height:38px;border-radius:50%;flex:0 0 38px;background:linear-gradient(120deg,#eee,#ddd);display:inline-grid;place-items:center;font-weight:700;color:#555}
+    .info{line-height:1}
+    .title{font-weight:700;font-size:14px}
+    .subtitle{font-size:12px;color:var(--muted)}
+    .meta .right{display:flex;gap:8px;align-items:center}
+    .icon-btn{border:0;background:transparent;padding:8px;border-radius:10px;cursor:pointer}
+    .like{display:flex;gap:6px;align-items:center;font-weight:600;color:var(--muted)}
+
+    /* Floating view button */
+    .view-btn{position:fixed;right:22px;bottom:22px;background:var(--accent);color:white;padding:12px 16px;border-radius:12px;border:0;box-shadow:0 10px 30px rgba(89,112,83,0.18);cursor:pointer}
+
+    /* Load more */
+    .loader{display:flex;justify-content:center;margin:28px 0}
+    .btn{background:var(--accent);color:white;border:0;padding:10px 18px;border-radius:10px;cursor:pointer;font-weight:700}
+
+    /* Modal / Lightbox */
+    .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(5,5,5,0.45),rgba(5,5,5,0.65));z-index:80}
+    .modal.open{display:flex}
+    .modal .inner{max-width:1000px;width:92%;background:transparent;border-radius:12px;display:flex;gap:22px;align-items:flex-start}
+    .modal .left{flex:1}
+    .modal img{width:100%;height:auto;border-radius:12px}
+    .modal .right{width:320px;background:var(--card-bg);border-radius:12px;padding:18px;box-shadow:var(--shadow)}
+    .close{position:absolute;right:22px;top:18px;background:transparent;border:0;color:white;font-size:24px;cursor:pointer}
+
+    /* subtle footer */
+    footer{margin-top:30px;text-align:center;color:var(--muted);font-size:13px;padding:30px 0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">
+        <div class="mark">P</div>
+        <div>
+          <h1>Pinterest-ish</h1>
+          <div style="font-size:12px;color:var(--muted)">Aesthetic inspiration board</div>
+        </div>
+      </div>
+
+      <div class="searchbar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden><path d="M21 21l-4.35-4.35" stroke="#9AA0A6" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path><circle cx="11" cy="11" r="5" stroke="#9AA0A6" stroke-width="1.6"></circle></svg>
+        <input id="search" placeholder="Search ideas, colors, or creators" />
+        <div class="actions">
+          <div class="chip">Explore</div>
+        </div>
+      </div>
+    </header>
+
+    <div class="filters" id="filters">
+      <button class="active" data-tag="all">All</button>
+      <button data-tag="home">Home</button>
+      <button data-tag="fashion">Fashion</button>
+      <button data-tag="food">Food</button>
+      <button data-tag="travel">Travel</button>
+      <button data-tag="art">Art</button>
+      <button data-tag="diy">DIY</button>
+    </div>
+
+    <main>
+      <section class="masonry" id="masonry">
+        <!-- Cards inserted by JS -->
+      </section>
+
+      <div class="loader">
+        <button id="loadMore" class="btn">Load more</button>
+      </div>
+    </main>
+
+    <footer>
+      Crafted with ♥ · A single-file demo · Resize the window to see responsive masonry
+    </footer>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="modal" aria-hidden="true">
+    <button class="close" id="modalClose">✕</button>
+    <div class="inner">
+      <div class="left">
+        <img id="modalImg" src="" alt="" />
+      </div>
+      <div class="right">
+        <h3 id="modalTitle">Title</h3>
+        <p id="modalAuthor" style="color:var(--muted);margin-top:6px">by Creator</p>
+        <p style="margin-top:12px;color:var(--muted);font-size:14px;line-height:1.45">This is an aesthetic pin. Use this sidebar to add details, materials, credits and a link back to the original source. Great for moodboards and quick inspiration.</p>
+        <div style="margin-top:16px;display:flex;gap:8px">
+          <button class="btn" id="savePin">Save</button>
+          <button class="icon-btn" id="shareBtn">Share</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <button class="view-btn" id="newPin">New Pin</button>
+
+  <script>
+    // Sample data (images from Unsplash). You can replace these with your own URLs.
+    const sample = [
+      {id:1, title:'Cozy reading nook', author:'A. Noor', img:'https://images.unsplash.com/photo-1524758631624-e2822e304c36?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3'},
+      {id:2, title:'Minimal kitchen', author:'L. Khan', img:'https://images.unsplash.com/photo-1519710164239-da123dc03ef4?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3'},
+      {id:3, title:'Sunkissed fabrics', author:'M. Ali', img:'https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3'},
+      {id:4, title:'Autumn streets', author:'R. Farid', img:'https://images.unsplash.com/photo-1472214103451-9374bd1c798e?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3'},
+      {id:5, title:'Clay pottery', author:'Z. Mina', img:'https://images.unsplash.com/photo-1544986581-efac024faf62?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3'},
+      {id:6, title:'Street food delight', author:'A. Rafee', img:'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3'},
+      {id:7, title:'Vintage type', author:'S. Noor', img:'https://images.unsplash.com/photo-1477587458883-47145ed94245?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3'},
+      {id:8, title:'Woven textures', author:'Y. Iqbal', img:'https://images.unsplash.com/photo-1505691723518-36a38f20cc86?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3'},
+      {id:9, title:'Coastal palette', author:'N. Raza', img:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3'},
+      {id:10, title:'Soft florals', author:'H. Sadiq', img:'https://images.unsplash.com/photo-1469474968028-56623f02e42e?q=80&w=1600&auto=format&fit=crop&ixlib=rb-4.0.3'}
+    ];
+
+    const masonry = document.getElementById('masonry');
+    const filters = document.getElementById('filters');
+    const modal = document.getElementById('modal');
+    const modalImg = document.getElementById('modalImg');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalAuthor = document.getElementById('modalAuthor');
+
+    // create card element
+    function makeCard(pin){
+      const card = document.createElement('article');
+      card.className = 'card';
+      card.innerHTML = `
+        <img loading="lazy" src="${pin.img}" alt="${pin.title}" />
+        <div class="meta">
+          <div class="left">
+            <div class="avatar">${pin.author.split(' ')[0].charAt(0)}</div>
+            <div class="info">
+              <div class="title">${pin.title}</div>
+              <div class="subtitle">${pin.author}</div>
+            </div>
+          </div>
+          <div class="right">
+            <div class="like"><span class="_likes">${Math.floor(Math.random()*900)+20}</span> ❤</div>
+            <button class="icon-btn" aria-label="open">⋯</button>
+          </div>
+        </div>
+      `;
+      // click to open modal
+      card.querySelector('img').addEventListener('click', ()=> openModal(pin));
+      card.querySelector('.icon-btn').addEventListener('click', ()=> openModal(pin));
+      return card;
+    }
+
+    // initial render
+    let current = [];
+    function renderBatch(n=6){
+      const next = sample.slice(current.length, current.length+n);
+      next.forEach(p=>{
+        masonry.appendChild(makeCard(p));
+        current.push(p);
+      });
+      if(current.length>=sample.length) document.getElementById('loadMore').style.display='none';
+    }
+    renderBatch(6);
+
+    document.getElementById('loadMore').addEventListener('click', ()=> renderBatch(4));
+
+    // modal
+    function openModal(pin){
+      modalImg.src = pin.img;
+      modalTitle.textContent = pin.title;
+      modalAuthor.textContent = 'by ' + pin.author;
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden','false');
+      document.body.style.overflow='hidden';
+    }
+    document.getElementById('modalClose').addEventListener('click', closeModal);
+    modal.addEventListener('click', (e)=>{ if(e.target===modal) closeModal(); });
+    function closeModal(){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); document.body.style.overflow='auto'; }
+
+    // filters
+    filters.addEventListener('click',(e)=>{
+      const btn = e.target.closest('button');
+      if(!btn) return;
+      [...filters.querySelectorAll('button')].forEach(x=>x.classList.remove('active'));
+      btn.classList.add('active');
+      // tiny demo: just reshuffle if not 'all'
+      if(btn.dataset.tag!=='all') shufflePins(); else resetPins();
+    });
+
+    function shufflePins(){
+      // shuffle current pins visually
+      for(let i=masonry.children.length; i>=0; i--){
+        masonry.appendChild(masonry.children[Math.random()*i|0]);
+      }
+    }
+    function resetPins(){
+      masonry.innerHTML=''; current=[]; renderBatch(6);
+    }
+
+    // search - simple highlight
+    const search = document.getElementById('search');
+    let timeout;
+    search.addEventListener('input',(e)=>{
+      clearTimeout(timeout);
+      timeout = setTimeout(()=>{
+        const q = e.target.value.trim().toLowerCase();
+        if(!q){ resetPins(); return }
+        const filtered = sample.filter(s=> s.title.toLowerCase().includes(q) || s.author.toLowerCase().includes(q));
+        masonry.innerHTML=''; filtered.forEach(p=> masonry.appendChild(makeCard(p)));
+      },220);
+    });
+
+    // new pin button demo
+    document.getElementById('newPin').addEventListener('click', ()=>{
+      alert('This single-page demo does not support uploading, but you can replace sample image URLs in the code.');
+    });
+
+    // accessibility: close modal with Esc
+    document.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeModal(); });
+  </script>
+</body>
+</html>
